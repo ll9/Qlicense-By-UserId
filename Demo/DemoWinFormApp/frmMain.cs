@@ -52,7 +52,18 @@ namespace DemoWinFormApp
             switch (_status)
             {
                 case LicenseStatus.VALID:
+                    DateTime ExpireDate = _lic.ExpirationDate.Date.Add(new TimeSpan(0, 23, 59, 59, 999));
+                    int remainingDays = (int)(ExpireDate - DateTime.Now).TotalDays;
 
+                    if (remainingDays <= 0)
+                    {
+                        MessageBox.Show("Your license expired. Please renew");
+                        OpenLicenseActivationForm();
+                    }
+                    else if (remainingDays <= 14)
+                    {
+                        MessageBox.Show($"Your license will expire in {remainingDays} days.\nPlease renew your license in time.");
+                    }
                     //TODO: If license is valid, you can do extra checking here
                     //TODO: E.g., check license expiry date if you have added expiry date property to your license entity
                     //TODO: Also, you can set feature switch here based on the different properties you added to your license entity 
@@ -67,18 +78,23 @@ namespace DemoWinFormApp
                     //and also popup the activation form for user to activate your application
                     MessageBox.Show(_msg, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    using (frmActivation frm = new frmActivation())
-                    {
-                        frm.CertificatePublicKeyData = _certPubicKeyData;
-                        frm.ShowDialog();
-
-                        //Exit the application after activation to reload the license file 
-                        //Actually it is not nessessary, you may just call the API to reload the license file
-                        //Here just simplied the demo process
-
-                        Application.Exit();
-                    }
+                    OpenLicenseActivationForm();
                     break;
+            }
+        }
+
+        private void OpenLicenseActivationForm()
+        {
+            using (frmActivation frm = new frmActivation())
+            {
+                frm.CertificatePublicKeyData = _certPubicKeyData;
+                frm.ShowDialog();
+
+                //Exit the application after activation to reload the license file 
+                //Actually it is not nessessary, you may just call the API to reload the license file
+                //Here just simplied the demo process
+
+                Application.Exit();
             }
         }
     }

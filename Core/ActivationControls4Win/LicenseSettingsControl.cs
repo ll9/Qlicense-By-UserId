@@ -81,7 +81,6 @@ namespace QLicense.Windows.Controls
                 _lic.UID = string.Empty;
             }
 
-            _lic.CreateDateTime = DateTime.Now;
 
             if (OnLicenseSettingsValidating != null)
             {
