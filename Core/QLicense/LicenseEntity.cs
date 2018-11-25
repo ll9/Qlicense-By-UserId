@@ -90,10 +90,6 @@ namespace QLicense
         [ShowInLicenseInfo(true, "Type", ShowInLicenseInfoAttribute.FormatType.EnumDescription)]
         public LicenseTypes Type { get; set; }
 
-        [Browsable(false)]
-        [XmlElement("CreateDateTime")]
-        [ShowInLicenseInfo(true, "Creation Time", ShowInLicenseInfoAttribute.FormatType.DateTime)]
-        public DateTime CreateDateTime { get; set; }
 
         /// <summary>
         /// For child class to do extra validation for those extended properties

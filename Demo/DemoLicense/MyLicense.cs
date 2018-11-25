@@ -1,4 +1,5 @@
 ﻿using QLicense;
+using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
@@ -24,6 +25,12 @@ namespace DemoLicense
         [XmlElement("EnableFeature03")]
         [ShowInLicenseInfo(true, "Enable Feature 03", ShowInLicenseInfoAttribute.FormatType.String)]
         public bool EnableFeature03 { get; set; }
+
+        [DisplayName("Expiration Date")]
+        [Category("License Options")]
+        [XmlElement("Expiration Date")]
+        [ShowInLicenseInfo(true, "Expiration Date", ShowInLicenseInfoAttribute.FormatType.Date)]
+        public DateTime ExpirationDate { get; set; }
 
         public MyLicense()
         {
