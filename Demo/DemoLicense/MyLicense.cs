@@ -1,4 +1,5 @@
-﻿using QLicense;
+﻿using Microsoft.VisualBasic;
+using QLicense;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -49,14 +50,32 @@ namespace DemoLicense
             {
                 case LicenseTypes.Single:
                     //For Single License, check whether UID is matched
-                    if (this.UID == LicenseHandler.GenerateUID(this.AppName))
+                    var isActivated = bool.Parse(Properties.Settings.Default["IsActivated"].ToString());
+                    if (isActivated)
                     {
                         _licStatus = LicenseStatus.VALID;
                     }
                     else
                     {
-                        validationMsg = "The license is NOT for this copy!";
-                        _licStatus = LicenseStatus.INVALID;                    
+                        var uid = Interaction.InputBox(
+                            "Geben Sie zur Lizenzaktivieung ihre Nutzer-ID (Firmenname) ein", 
+                            "ID-Abfrage", 
+                            "Nutzer-ID");
+
+                        var hash = SHA256_Util.GetSHA256(uid);
+
+                        if (UID == hash)
+                        {
+                            _licStatus = LicenseStatus.VALID;
+                            // TODO: Call home here
+                            Properties.Settings.Default["IsActivated"] = true.ToString();
+                            Properties.Settings.Default.Save();
+                        }
+                        else
+                        {
+                            validationMsg = "Eingegebene ID stimmt nicht mit der Lizenz-ID überein";
+                            _licStatus = LicenseStatus.INVALID;
+                        }
                     }
                     break;
                 case LicenseTypes.Volume:

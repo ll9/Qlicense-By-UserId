@@ -55,7 +55,11 @@ namespace DemoWinFormApp
                     DateTime ExpireDate = _lic.ExpirationDate.Date.Add(new TimeSpan(0, 23, 59, 59, 999));
                     int remainingDays = (int)(ExpireDate - DateTime.Now).TotalDays;
 
-                    if (remainingDays <= 0)
+                    if (_lic.ExpirationDate == DateTime.MinValue)
+                    {
+                        // Lifetime License
+                    }
+                    else if (remainingDays <= 0)
                     {
                         MessageBox.Show("Your license expired. Please renew");
                         OpenLicenseActivationForm();

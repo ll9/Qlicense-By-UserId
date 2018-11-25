@@ -7,7 +7,7 @@ using System.Security.Cryptography.Xml;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
-
+using System.Reflection;
 
 namespace QLicense
 {
@@ -24,6 +24,11 @@ namespace QLicense
         public static string GenerateUID(string appName)
         {
             return HardwareInfo.GenerateUID(appName);
+        }
+
+        public static string GetGuid()
+        {
+            return null;
         }
 
         public static string GenerateLicenseBASE64String(LicenseEntity lic, byte[] certPrivateKeyData, SecureString certFilePwd)
