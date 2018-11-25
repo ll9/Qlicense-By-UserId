@@ -75,7 +75,7 @@ namespace QLicense.Windows.Controls
                     _lic.Type = LicenseTypes.Single;
                     var uid = txtUID.Text.Trim();
 
-                    var sha = GetSHA256(uid);
+                    var sha = SHA256_Util.GetSHA256(uid);
                     _lic.UID = sha;
                 }
             }
@@ -103,24 +103,6 @@ namespace QLicense.Windows.Controls
                 string _licStr = LicenseHandler.GenerateLicenseBASE64String(_lic, CertificatePrivateKeyData, CertificatePassword);
 
                 OnLicenseGenerated(this, new LicenseGeneratedEventArgs() { LicenseBASE64String = _licStr });
-            }
-        }
-
-        private static string GetSHA256(string uid)
-        {
-            // Create a SHA256   
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                // ComputeHash - returns byte array  
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(uid));
-
-                // Convert byte array to a string   
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
             }
         }
     }

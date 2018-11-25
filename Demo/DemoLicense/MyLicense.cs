@@ -43,6 +43,8 @@ namespace DemoLicense
             LicenseStatus _licStatus = LicenseStatus.UNDEFINED;
             validationMsg = string.Empty;
 
+
+
             switch (this.Type)
             {
                 case LicenseTypes.Single:

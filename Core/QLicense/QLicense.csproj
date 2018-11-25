@@ -53,6 +53,7 @@
     <Compile Include="LicenseStatus.cs" />
     <Compile Include="LicenseTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SHA256_Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QLicense.snk" />
