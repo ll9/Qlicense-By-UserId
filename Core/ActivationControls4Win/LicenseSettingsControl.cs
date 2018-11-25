@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Security;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
 
 namespace QLicense.Windows.Controls
@@ -64,15 +66,17 @@ namespace QLicense.Windows.Controls
 
             if (rdoSingleLicense.Checked)
             {
-                if (LicenseHandler.ValidateUIDFormat(txtUID.Text.Trim()))
+                if (string.IsNullOrEmpty(txtUID.Text.Trim()))
                 {
-                    _lic.Type = LicenseTypes.Single;
-                    _lic.UID = txtUID.Text.Trim();
+                    MessageBox.Show("Benutzer ID / Firmenname darf nicht leer sein");
                 }
                 else
                 {
-                    MessageBox.Show("License UID is blank or invalid", string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    _lic.Type = LicenseTypes.Single;
+                    var uid = txtUID.Text.Trim();
+
+                    var sha = GetSHA256(uid);
+                    _lic.UID = sha;
                 }
             }
             else if (rdoVolumeLicense.Checked)
@@ -99,6 +103,24 @@ namespace QLicense.Windows.Controls
                 string _licStr = LicenseHandler.GenerateLicenseBASE64String(_lic, CertificatePrivateKeyData, CertificatePassword);
 
                 OnLicenseGenerated(this, new LicenseGeneratedEventArgs() { LicenseBASE64String = _licStr });
+            }
+        }
+
+        private static string GetSHA256(string uid)
+        {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(uid));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
     }
