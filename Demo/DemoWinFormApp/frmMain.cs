@@ -33,21 +33,7 @@ namespace DemoWinFormApp
                 _certPubicKeyData = _mem.ToArray();
             }
 
-            //Check if the XML license file exists
-            if (File.Exists("license.lic"))
-            {
-                _lic = (MyLicense)LicenseHandler.ParseLicenseFromBASE64String(
-                    typeof(MyLicense),
-                    File.ReadAllText("license.lic"),
-                    _certPubicKeyData,
-                    out _status,
-                    out _msg);
-            }
-            else
-            {
-                _status = LicenseStatus.INVALID;
-                _msg = "Your copy of this application is not activated";
-            }
+            ValidateLicense(ref _lic, ref _msg, ref _status);
 
             switch (_status)
             {
@@ -85,6 +71,95 @@ namespace DemoWinFormApp
                     OpenLicenseActivationForm();
                     break;
             }
+        }
+
+        private void ValidateLicense(ref MyLicense _lic, ref string _msg, ref LicenseStatus _status, string licensePath = "license.lic")
+        {
+
+            //Check if the XML license file exists
+            if (!File.Exists(licensePath))
+            {
+                MessageBox.Show("Software noch nicht aktiviert. Geben Sie zur Aktivierung den Pfad" +
+                    " zur Lizenzdatei an:");
+
+                licensePath = RequestLicenseFile();
+
+                if (licensePath == null)
+                {
+                    Application.Exit();
+                }
+                else
+                {
+                    ValidateLicense(ref _lic, ref _msg, ref _status, licensePath);
+                }
+
+            }
+
+            _lic = (MyLicense)LicenseHandler.ParseLicenseFromBASE64String(
+                typeof(MyLicense),
+                File.ReadAllText(licensePath),
+                _certPubicKeyData,
+                out _status,
+                out _msg);
+
+
+            if (_status == LicenseStatus.INVALID)
+            {
+                MessageBox.Show("izenz ungültig, bitte beantragen Sie eine Lizenz");
+                licensePath = RequestLicenseFile();
+
+                if (licensePath == null)
+                {
+                    Application.Exit();
+                }
+                else
+                {
+                    ValidateLicense(ref _lic, ref _msg, ref _status, licensePath);
+                }
+            }
+
+            DateTime ExpireDate = _lic.ExpirationDate.Date.Add(new TimeSpan(0, 23, 59, 59, 999));
+            int remainingDays = (int)(ExpireDate - DateTime.Now).TotalDays;
+
+            if (_lic.ExpirationDate == DateTime.MinValue)
+            {
+                // Lifetime License
+            }
+            else if (remainingDays <= 0)
+            {
+                MessageBox.Show("Your license expired. Please renew");
+                // TODO RENEW
+                licensePath = RequestLicenseFile();
+
+                if (licensePath == null)
+                {
+                    Application.Exit();
+                }
+                else
+                {
+                    ValidateLicense(ref _lic, ref _msg, ref _status, licensePath);
+                }
+            }
+            else if (remainingDays <= 14)
+            {
+                MessageBox.Show($"Your license will expire in {remainingDays} days.\nPlease renew your license in time.");
+            }
+        }
+
+        private static string RequestLicenseFile()
+        {
+
+            var dialog = new OpenFileDialog()
+            {
+                Filter = "Lizenz Datei (*.lic) | *.lic"
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                return dialog.FileName;
+            }
+
+            return null;
         }
 
         private void OpenLicenseActivationForm()
