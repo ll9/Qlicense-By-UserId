@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using System.Reflection;
 using QLicense;
 using DemoLicense;
+using Microsoft.VisualBasic;
+using System.Diagnostics;
 
 namespace DemoWinFormApp
 {
@@ -19,6 +21,9 @@ namespace DemoWinFormApp
 
         private void frmMain_Shown(object sender, EventArgs e)
         {
+            if (Debugger.IsAttached)
+                Properties.Settings.Default.Reset();
+
             //Initialize variables with default values
             MyLicense _lic = null;
             string _msg = string.Empty;
@@ -35,42 +40,53 @@ namespace DemoWinFormApp
 
             ValidateLicense(ref _lic, ref _msg, ref _status);
 
-            switch (_status)
+            var isActivated = bool.Parse(Properties.Settings.Default["IsActivated"].ToString());
+            if (!isActivated)
             {
-                case LicenseStatus.VALID:
-                    DateTime ExpireDate = _lic.ExpirationDate.Date.Add(new TimeSpan(0, 23, 59, 59, 999));
-                    int remainingDays = (int)(ExpireDate - DateTime.Now).TotalDays;
+                string uid;
+                do
+                {
+                    uid = Interaction.InputBox(
+                        "Geben Sie zur Lizenzaktivieung ihre Nutzer-ID (Firmenname) ein",
+                        "ID-Abfrage",
+                        "Nutzer-ID");
 
-                    if (_lic.ExpirationDate == DateTime.MinValue)
+                    if (string.IsNullOrEmpty(uid))
                     {
-                        // Lifetime License
+                        Application.Exit();
                     }
-                    else if (remainingDays <= 0)
+                    if (SHA256_Util.GetSHA256(uid) != _lic.UID)
                     {
-                        MessageBox.Show("Your license expired. Please renew");
-                        OpenLicenseActivationForm();
+                        MessageBox.Show("Id stimmt nicht überein");
                     }
-                    else if (remainingDays <= 14)
-                    {
-                        MessageBox.Show($"Your license will expire in {remainingDays} days.\nPlease renew your license in time.");
-                    }
-                    //TODO: If license is valid, you can do extra checking here
-                    //TODO: E.g., check license expiry date if you have added expiry date property to your license entity
-                    //TODO: Also, you can set feature switch here based on the different properties you added to your license entity 
-
-                    //Here for demo, just show the license information and RETURN without additional checking       
-                    licInfo.ShowLicenseInfo(_lic);
-
-                    return;
-
-                default:
-                    //for the other status of license file, show the warning message
-                    //and also popup the activation form for user to activate your application
-                    MessageBox.Show(_msg, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    OpenLicenseActivationForm();
-                    break;
+                } while (SHA256_Util.GetSHA256(uid) != _lic.UID);
             }
+
+            try
+            {
+                var isOnBlackList = CheckBlacklist();
+                if (isOnBlackList)
+                {
+                    MessageBox.Show("Lizenzaktivierung fehlgeschlagen");
+                    Application.Exit();
+                }
+            }
+            catch
+            {
+                // No Internet
+                MessageBox.Show("Zur Lizenzaktivierung wird eine Internetverbindung benötigt\n" + 
+                    "Führen Sie die Aktivierung bei bestehender Internetverbindung erneut aus");
+                Application.Exit();
+            }
+
+            Properties.Settings.Default["IsActivated"] = true;
+            Properties.Settings.Default.Save();
+        }
+
+        // TODO: Implement: replace with GET Request from the server
+        private static bool CheckBlacklist()
+        {
+            return false;
         }
 
         private void ValidateLicense(ref MyLicense _lic, ref string _msg, ref LicenseStatus _status, string licensePath = "license.lic")
