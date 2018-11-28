@@ -65,6 +65,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Utils\FileHandler.cs" />
     <Compile Include="Utils\IFileHandler.cs" />
+    <Compile Include="Utils\LicenseManager.cs" />
     <EmbeddedResource Include="frmActivation.resx">
       <DependentUpon>frmActivation.cs</DependentUpon>
     </EmbeddedResource>
