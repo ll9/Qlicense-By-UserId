@@ -114,6 +114,31 @@ namespace QLicense
             return _lic;
         }
 
+        public static bool CheckRSA(byte[] certPubKeyData, string licenseString)
+        {
+
+            try
+            {
+                //Get RSA key from certificate
+                X509Certificate2 cert = new X509Certificate2(certPubKeyData);
+                RSACryptoServiceProvider rsaKey = (RSACryptoServiceProvider)cert.PublicKey.Key;
+
+                XmlDocument xmlDoc = new XmlDocument();
+
+                // Load an XML file into the XmlDocument object.
+                xmlDoc.PreserveWhitespace = true;
+                xmlDoc.LoadXml(Encoding.UTF8.GetString(Convert.FromBase64String(licenseString)));
+
+                // Verify the signature of the signed XML.            
+                bool licenseIsValid = VerifyXml(xmlDoc, rsaKey);
+                return licenseIsValid;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         // Sign an XML file. 
         // This document cannot be verified unless the verifying 
         // code has the key with which it was signed.
