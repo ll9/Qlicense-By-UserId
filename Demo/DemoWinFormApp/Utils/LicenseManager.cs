@@ -48,7 +48,7 @@ namespace DemoWinFormApp.Utils
 
             if (RsaIsValid)
             {
-                bool licenseIsStillValid = CheckLicenseStillValid(licenseString);
+                bool licenseIsStillValid = CheckLicenseStillValid(license);
                 if (licenseIsStillValid)
                 {
                     bool licenseAlreadyActivated = CheckLicenseIsActivated();
@@ -169,14 +169,12 @@ namespace DemoWinFormApp.Utils
             return isActivated;
         }
 
-        public bool CheckLicenseStillValid(string licenseString)
+        public bool CheckLicenseStillValid(MyLicense license)
         {
-            var _lic = DeserializeLicenseEntity<MyLicense>(licenseString);
-
-            DateTime ExpireDate = _lic.ExpirationDate.Date.Add(new TimeSpan(0, 23, 59, 59, 999));
+            DateTime ExpireDate = license.ExpirationDate.Date.Add(new TimeSpan(0, 23, 59, 59, 999));
             int remainingDays = (int)(ExpireDate - DateTime.Now).TotalDays;
 
-            if (_lic.ExpirationDate == DateTime.MinValue)
+            if (license.ExpirationDate == DateTime.MinValue)
             {
                 // Lifetime License
                 return true;
