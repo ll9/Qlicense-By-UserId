@@ -40,8 +40,8 @@ namespace DemoWinFormApp.Utils
 
         public void ValidateLicense()
         {
-            byte[] certPubKeyData = GetPublicKey();
-            var licenseString = File.ReadAllText(_licenseFile);
+            byte[] certPubKeyData = _fileHandler.GetPublicKey();
+            var licenseString = _fileHandler.ReadAllText(_licenseFile);
             var license = DeserializeLicenseEntity<MyLicense>(licenseString);
 
             var RsaIsValid = LicenseHandler.CheckRSA(certPubKeyData, licenseString);
@@ -214,21 +214,6 @@ namespace DemoWinFormApp.Utils
                 _lic = (T)_serializer.Deserialize(_reader);
             }
             return _lic;
-        }
-
-        public byte[] GetPublicKey()
-        {
-            byte[] certPubKeyData;
-
-            Assembly _assembly = Assembly.GetExecutingAssembly();
-            using (MemoryStream _mem = new MemoryStream())
-            {
-                _assembly.GetManifestResourceStream("DemoWinFormApp.LicenseVerify.cer").CopyTo(_mem);
-
-                certPubKeyData = _mem.ToArray();
-            }
-
-            return certPubKeyData;
         }
 
         // TODO: Implement: replace with GET Request from the server
