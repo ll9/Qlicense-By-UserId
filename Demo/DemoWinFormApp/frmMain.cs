@@ -34,17 +34,18 @@ namespace DemoWinFormApp
             var licenseExists = File.Exists(LicenseFile);
             if (licenseExists)
             {
-                _ValidateLicense();
+                ValidateLicense();
             }
             else
             {
+                MessageBox.Show("Geben Sie den Pfad zur Lizenzdatei an");
                 GetLicenseAndValidate();
             }
 
             //licInfo.ShowLicenseInfo(_lic);
         }
 
-        private void _ValidateLicense()
+        private void ValidateLicense()
         {
             byte[] certPubKeyData = GetPublicKey();
             var licenseString = File.ReadAllText(LicenseFile);
@@ -91,7 +92,7 @@ namespace DemoWinFormApp
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 File.Copy(dialog.FileName, LicenseFile);
-                _ValidateLicense();
+                ValidateLicense();
             }
             else
             {
