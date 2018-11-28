@@ -63,6 +63,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Utils\FileHandler.cs" />
+    <Compile Include="Utils\IFileHandler.cs" />
     <EmbeddedResource Include="frmActivation.resx">
       <DependentUpon>frmActivation.cs</DependentUpon>
     </EmbeddedResource>

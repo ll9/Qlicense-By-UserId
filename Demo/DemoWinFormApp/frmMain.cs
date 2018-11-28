@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Xml;
 using System.Text;
 using System.Xml.Serialization;
+using DemoWinFormApp.Utils;
 
 namespace DemoWinFormApp
 {
@@ -21,15 +22,25 @@ namespace DemoWinFormApp
 
     public partial class frmMain : Form
     {
+        private IFileHandler _fileHandler;
         private const string LicenseFile = "license.lic";
         byte[] _certPubicKeyData;
-        public frmMain()
+
+        public frmMain(IFileHandler fileHandler = null)
         {
             InitializeComponent();
+            _fileHandler = fileHandler ?? new FileHandler();
         }
 
 
         private void frmMain_Shown(object sender, EventArgs e)
+        {
+            CheckLicense();
+
+            //licInfo.ShowLicenseInfo(_lic);
+        }
+
+        public void CheckLicense()
         {
             var licenseExists = File.Exists(LicenseFile);
             if (licenseExists)
@@ -41,11 +52,9 @@ namespace DemoWinFormApp
                 MessageBox.Show("Geben Sie den Pfad zur Lizenzdatei an");
                 GetLicenseAndValidate();
             }
-
-            //licInfo.ShowLicenseInfo(_lic);
         }
 
-        private void ValidateLicense()
+        public void ValidateLicense()
         {
             byte[] certPubKeyData = GetPublicKey();
             var licenseString = File.ReadAllText(LicenseFile);
@@ -82,7 +91,7 @@ namespace DemoWinFormApp
             //throw new NotImplementedException();
         }
 
-        private void GetLicenseAndValidate()
+        public void GetLicenseAndValidate()
         {
             var dialog = new OpenFileDialog()
             {
@@ -100,7 +109,7 @@ namespace DemoWinFormApp
             }
         }
 
-        private void StartLicenseActivationProcess(MyLicense license)
+        public void StartLicenseActivationProcess(MyLicense license)
         {
             string userId = GetIdFromUser();
             bool userIdIsValid = ValidateUserId(userId, license.UID);
@@ -133,20 +142,20 @@ namespace DemoWinFormApp
             throw new NotImplementedException();
         }
 
-        private void PersistLicenseActivation()
+        public void PersistLicenseActivation()
         {
             Properties.Settings.Default["IsActivated"] = true;
             Properties.Settings.Default.Save();
         }
 
-        private ServerBlackListStatus CheckUserIsNotOnBlacklist(string uID)
+        public ServerBlackListStatus CheckUserIsNotOnBlacklist(string uID)
         {
             // TODO: implement
             // Make a call to the server to check wheter user is banned or not
             return ServerBlackListStatus.NOT_BANNED;
         }
 
-        private bool ValidateUserId(string userId, string xmlSha)
+        public bool ValidateUserId(string userId, string xmlSha)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -159,7 +168,7 @@ namespace DemoWinFormApp
             return idIsValid;
         }
 
-        private string GetIdFromUser()
+        public string GetIdFromUser()
         {
             var rawId = Interaction.InputBox(
                 "Geben Sie zur Lizenzaktivieung ihre Nutzer-ID (Firmenname) ein",
@@ -170,13 +179,13 @@ namespace DemoWinFormApp
             return userId;
         }
 
-        private bool CheckLicenseIsActivated()
+        public bool CheckLicenseIsActivated()
         {
             var isActivated = bool.Parse(Properties.Settings.Default["IsActivated"].ToString());
             return isActivated;
         }
 
-        private bool CheckLicenseStillValid(string licenseString)
+        public bool CheckLicenseStillValid(string licenseString)
         {
             var _lic = DeserializeLicenseEntity<MyLicense>(licenseString);
 
@@ -198,7 +207,7 @@ namespace DemoWinFormApp
             }
         }
 
-        private T DeserializeLicenseEntity<T>(string licenseString) where T : LicenseEntity
+        public T DeserializeLicenseEntity<T>(string licenseString) where T : LicenseEntity
         {
             T _lic;
 
@@ -223,7 +232,7 @@ namespace DemoWinFormApp
             return _lic;
         }
 
-        private byte[] GetPublicKey()
+        public byte[] GetPublicKey()
         {
             byte[] certPubKeyData;
 
@@ -239,12 +248,12 @@ namespace DemoWinFormApp
         }
 
         // TODO: Implement: replace with GET Request from the server
-        private static ServerBlackListStatus CheckBlacklist()
+        public static ServerBlackListStatus CheckBlacklist()
         {
             return ServerBlackListStatus.NOT_BANNED;
         }
 
-        private void ValidateLicense(ref MyLicense _lic, ref string _msg, ref LicenseStatus _status)
+        public void ValidateLicense(ref MyLicense _lic, ref string _msg, ref LicenseStatus _status)
         {
             string licensePath = LicenseFile;
 

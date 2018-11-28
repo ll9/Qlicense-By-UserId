@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QLicense", "Core\QLicense\QLicense.csproj", "{1980E43F-C5E4-4A2B-95A6-1AEBDC7EE2B7}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoLicense", "Demo\DemoLicense\DemoLicense.csproj", "{9F0BD6DF-F288-451B-828E-6431E5441DB8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivationControls4Wpf", "Core\ActivationControls4Wpf\ActivationControls4Wpf.csproj", "{8650B5B4-754B-4B77-A26F-08466854BE3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWinformAppTests", "DemoWinformAppTests\DemoWinformAppTests.csproj", "{D948511F-05EC-438F-B4E5-7CA07DF0AAED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{8650B5B4-754B-4B77-A26F-08466854BE3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8650B5B4-754B-4B77-A26F-08466854BE3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8650B5B4-754B-4B77-A26F-08466854BE3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D948511F-05EC-438F-B4E5-7CA07DF0AAED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D948511F-05EC-438F-B4E5-7CA07DF0AAED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D948511F-05EC-438F-B4E5-7CA07DF0AAED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D948511F-05EC-438F-B4E5-7CA07DF0AAED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,9 @@ Global
 		{7E6FF8AE-63E9-4BB2-9ACE-7580CE229F65} = {9461EE4C-58DE-49DC-B363-46C0705BEF74}
 		{9F0BD6DF-F288-451B-828E-6431E5441DB8} = {9461EE4C-58DE-49DC-B363-46C0705BEF74}
 		{8650B5B4-754B-4B77-A26F-08466854BE3A} = {036B2D67-D093-4477-ABC6-4902676A79B2}
+		{D948511F-05EC-438F-B4E5-7CA07DF0AAED} = {9461EE4C-58DE-49DC-B363-46C0705BEF74}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {586448AE-4D95-4BCF-B5D2-EBC97254B602}
 	EndGlobalSection
 EndGlobal
